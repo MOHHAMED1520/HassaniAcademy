@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الدورات | أكاديمية الحساني للتدريب</title>
+  <meta name="description" content="استعرض دورات STEP الحساني 2026 واختر الدورة المناسبة من متجر أكاديمية الحساني." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="courses">
+  <div id="scrollProgress"></div>
+  <header class="topbar" id="topbar">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.jpg" alt="شعار أكاديمية الحساني" class="brand-logo" />
+        <div>
+          <strong>أكاديمية الحساني للتدريب</strong>
+          <span>2026 STEP Store</span>
+        </div>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="courses.html" class="active">الدورات</a>
+        <a href="cart.html">السلة <span class="cart-badge" data-cart-count>0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="subhero">
+      <div class="container subhero-content">
+        <span class="eyebrow">📚 اختر الدورة المناسبة</span>
+        <h1>كل برامج STEP الحساني في صفحة واحدة</h1>
+        <p>تفاصيل واضحة، أسعار خاصة، وصف مختصر، وروابط مباشرة للإضافة إلى السلة أو قراءة تفاصيل أعمق.</p>
+      </div>
+    </section>
+
+    <section class="section-strip">
+      <div class="container">
+        <div class="course-grid" id="allCourses"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div>
+        <strong>أكاديمية الحساني للتدريب</strong>
+        <p style="color:var(--muted); margin-top:6px; font-size:0.9rem;">اختبار STEP 2026 يبدأ بخطة واضحة ومسار تدريبي مناسب.</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="cart.html">السلة</a>
+        <a href="https://t.me/qiyas_2026_2030" target="_blank" rel="noopener">💬 تيليجرام</a>
+      </div>
+    </div>
+  </footer>
+
+  <button id="ai-chat-btn" title="تحدث مع المساعد الذكي" aria-label="فتح المساعد الذكي">
+    🤖
+    <span class="chat-notification"></span>
+  </button>
+
+  <div id="ai-chat-window" role="dialog" aria-label="المساعد الذكي">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div class="chat-header-info">
+        <strong>مساعد أكاديمية الحساني</strong>
+        <span><span class="status-dot"></span> متصل الآن</span>
+      </div>
+      <button class="chat-close" id="chatClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="quick-replies" id="quickReplies"></div>
+    <div class="chat-input-area">
+      <textarea id="chatInput" placeholder="اكتب سؤالك هنا..." rows="1"></textarea>
+      <button id="chatSend" title="إرسال">➤</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
