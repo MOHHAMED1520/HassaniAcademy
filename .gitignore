@@ -1,3 +1,30 @@
-site_extracted/
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Logs
 *.log
-*.DS_Store
+npm-debug.log*
+
+# Build temp
+*.tsbuildinfo
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dist is committed for GitHub Pages deployment
+# dist/  <-- intentionally NOT ignored
