@@ -104,7 +104,7 @@ export default function HeroSection() {
             <div className="relative">
               <div className="absolute inset-0 bg-[#f5a623]/20 rounded-3xl blur-2xl scale-110" />
               <img
-                src="/assets/logo.jpg"
+                src="./assets/logo.jpg"
                 alt="أكاديمية الحساني STEP 2026"
                 className="relative w-64 h-64 lg:w-80 lg:h-80 rounded-3xl object-cover border-4 border-[#f5a623] shadow-gold"
               />

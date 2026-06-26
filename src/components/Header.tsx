@@ -1,17 +1,26 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Menu, X, GraduationCap } from "lucide-react";
 
 export default function Header() {
   const { totalItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      setMobileMenuOpen(false);
+    setMobileMenuOpen(false);
+    if (location.pathname !== "/") {
+      // Navigate home first, then scroll after a short delay
+      navigate("/");
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -22,7 +31,7 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img
-              src="/assets/logo.jpg"
+              src="./assets/logo.jpg"
               alt="أكاديمية الحساني"
               className="h-12 w-12 lg:h-14 lg:w-14 rounded-xl object-cover border-2 border-[#f5a623] shadow-gold"
             />
