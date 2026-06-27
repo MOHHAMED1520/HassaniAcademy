@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <img
-                src="/assets/logo.jpg"
+                src="./assets/logo.jpg"
                 alt="أكاديمية الحساني"
                 className="w-14 h-14 rounded-xl object-cover border-2 border-[#f5a623]"
               />
