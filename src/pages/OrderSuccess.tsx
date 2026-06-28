@@ -41,44 +41,50 @@ export default function OrderSuccess() {
   // Generate Telegram message
   const generateTelegramMessage = () => {
     const coursesList = courses.map((c, i) => `${i + 1}. ${c.name} - ${c.price} ر.س`).join("\n");
-    return `
-🎓 *طلب جديد - أكاديمية الحساني STEP 2026*
+    return `🎓 طلب جديد - أكاديمية الحساني STEP 2026
 
 ━━━━━━━━━━━━━━━━
-👤 *بيانات المشترك:*
+👤 بيانات المشترك:
 • الاسم: ${customerData.fullName}
 • الجوال: ${customerData.phone}
 • البريد: ${customerData.email}
 • الدرجة المستهدفة: ${customerData.targetScore}
 
 ━━━━━━━━━━━━━━━━
-📚 *الدورات المختارة:*
+📚 الدورات المختارة:
 ${coursesList}
 
 ━━━━━━━━━━━━━━━━
-💰 *المبلغ الإجمالي: ${totalPrice} ر.س*
+💰 المبلغ الإجمالي: ${totalPrice} ر.س
 
 ━━━━━━━━━━━━━━━━
-⏰ *حالة الطلب:* في انتظار التحويل البنكي
-📱 *يرجى إرسال تفاصيل الدفع لتأكيد الاشتراك*
-`.trim();
+⏰ حالة الطلب: في انتظار التحويل البنكي
+📱 يرجى إرسال تفاصيل الدفع لتأكيد الاشتراك`;
   };
 
   const telegramMessage = generateTelegramMessage();
   const encodedMessage = encodeURIComponent(telegramMessage);
-  const telegramUrl = `https://t.me/qiyas_2026_2030`;
-  const telegramSendUrl = `https://t.me/share/url?url=${encodeURIComponent("https://t.me/qiyas_2026_2030")}&text=${encodedMessage}`;
+
+  // Direct link to open chat with @qiyas_2026_2030 and pre-fill the message
+  // t.me/username?text=... opens the chat directly with the message ready to send
+  const telegramDirectUrl = `https://t.me/qiyas_2026_2030?text=${encodedMessage}`;
+  const telegramProfileUrl = `https://t.me/qiyas_2026_2030`;
 
   const handleCopyMessage = () => {
     navigator.clipboard.writeText(telegramMessage).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
+    }).catch(() => {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = telegramMessage;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     });
-  };
-
-  const handleOpenTelegram = () => {
-    // Try to open Telegram with pre-filled message
-    window.open(telegramSendUrl, "_blank");
   };
 
   return (
@@ -180,14 +186,14 @@ ${coursesList}
               </div>
               <div>
                 <h3 className="text-xl font-bold">خطوة واحدة متبقية!</h3>
-                <p className="text-white/60 text-sm">أرسل تفاصيل طلبك عبر التلجرام لإتمام عملية الشراء</p>
+                <p className="text-white/60 text-sm">انقر الزر أدناه لفتح محادثة التلجرام مع رسالتك الجاهزة</p>
               </div>
             </div>
 
             {/* Pre-written Message Preview */}
             <div className="bg-white/10 rounded-xl p-4 mb-4 border border-white/10">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[#f5a623] font-medium">الرسالة الجاهزة:</span>
+                <span className="text-xs text-[#f5a623] font-medium">الرسالة الجاهزة للإرسال:</span>
                 <button
                   onClick={handleCopyMessage}
                   className="flex items-center gap-1 text-xs text-white/60 hover:text-[#f5a623] transition-colors"
@@ -199,36 +205,38 @@ ${coursesList}
                   )}
                 </button>
               </div>
-              <pre className="text-xs text-white/80 whitespace-pre-wrap font-mono leading-relaxed max-h-48 overflow-y-auto bg-white/5 rounded-lg p-3">
+              <pre className="text-xs text-white/80 whitespace-pre-wrap font-mono leading-relaxed max-h-48 overflow-y-auto bg-white/5 rounded-lg p-3 text-right" dir="rtl">
                 {telegramMessage}
               </pre>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleOpenTelegram}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-[#f5a623] text-[#1a2a4a] font-bold hover:shadow-gold hover:scale-[1.02] transition-all"
-              >
-                <Send className="w-5 h-5" />
-                فتح التلجرام وإرسال الطلب
-              </button>
-              <a
-                href={telegramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-6 py-4 rounded-xl border border-white/30 text-white font-medium hover:bg-white/10 transition-all"
-              >
-                <MessageCircle className="w-5 h-5" />
-                مراسلة الدعم
-              </a>
-            </div>
+            {/* Main CTA - Direct Telegram button */}
+            <a
+              href={telegramDirectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-3 px-6 py-5 rounded-xl bg-[#f5a623] text-[#1a2a4a] font-bold text-lg hover:shadow-gold hover:scale-[1.02] transition-all mb-3"
+            >
+              <Send className="w-6 h-6" />
+              📲 أرسل طلبك على تيليجرام الآن
+            </a>
+
+            {/* Secondary button */}
+            <a
+              href={telegramProfileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/30 text-white font-medium hover:bg-white/10 transition-all"
+            >
+              <MessageCircle className="w-5 h-5" />
+              فتح حساب التيليجرام @qiyas_2026_2030
+            </a>
 
             <div className="mt-4 p-3 bg-white/5 rounded-xl border border-white/10 flex items-start gap-2">
               <AlertCircle className="w-5 h-5 text-[#f5a623] flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-white/60 leading-relaxed">
-                بعد إرسال الرسالة، سيقوم فريق الدعم بإرسال تفاصيل الحساب البنكي لإتمام عملية التحويل.
-                سيتم تفعيل اشتراكك فور تأكيد عملية الدفع.
+              <p className="text-xs text-white/60 leading-relaxed" dir="rtl">
+                سيفتح زر "أرسل طلبك" محادثة تيليجرام مع رسالتك جاهزة للإرسال. فقط اضغط إرسال!
+                بعد ذلك سيتواصل معك فريق الدعم لإتمام عملية الدفع وتفعيل اشتراكك.
               </p>
             </div>
           </div>

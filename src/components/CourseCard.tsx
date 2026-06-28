@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useCart } from "@/context/CartContext";
 import type { Course } from "@/data/courses";
 import { Crown, Zap, BookOpen, Check, ShoppingCart, Eye, Star, Clock, Target } from "lucide-react";
@@ -17,10 +17,13 @@ interface CourseCardProps {
 
 export default function CourseCard({ course, index }: CourseCardProps) {
   const { addToCart, isInCart } = useCart();
+  const navigate = useNavigate();
   const [added, setAdded] = useState(false);
   const inCart = isInCart(course.id);
 
-  const handleAdd = () => {
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!inCart) {
       addToCart(course.id);
       setAdded(true);
@@ -28,15 +31,26 @@ export default function CourseCard({ course, index }: CourseCardProps) {
     }
   };
 
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/course/${course.id}`);
+  };
+
   const discount = Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100);
 
   return (
     <div
-      className="group relative bg-white rounded-2xl border border-[#e5e7eb] overflow-hidden hover-lift shadow-lg animate-slide-up card-shine"
+      className="group relative bg-white rounded-2xl border border-[#e5e7eb] hover-lift shadow-lg animate-slide-up"
       style={{ animationDelay: `${index * 150}ms` }}
     >
+      {/* Shine effect - pointer-events disabled so it never blocks clicks */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
+        <div className="card-shine-inner" />
+      </div>
+
       {/* Badge */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-20 pointer-events-none">
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#f5a623] text-[#1a2a4a] shadow-gold">
           <Star className="w-3 h-3 ml-1 fill-current" />
           {course.badge}
@@ -44,15 +58,15 @@ export default function CourseCard({ course, index }: CourseCardProps) {
       </div>
 
       {/* Discount Badge */}
-      <div className="absolute top-4 left-4 z-10">
+      <div className="absolute top-4 left-4 z-20 pointer-events-none">
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white">
           وفر {discount}%
         </span>
       </div>
 
       {/* Header Gradient */}
-      <div className={`bg-gradient-to-br ${course.gradient} p-6 pb-8 relative`}>
-        <div className="absolute inset-0 opacity-10">
+      <div className={`bg-gradient-to-br ${course.gradient} p-6 pb-8 relative rounded-t-2xl overflow-hidden`}>
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
         </div>
@@ -66,7 +80,7 @@ export default function CourseCard({ course, index }: CourseCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-6 relative z-10">
         {/* Target Score */}
         <div className="flex items-center justify-center gap-2 mb-4 -mt-10">
           <div className="bg-white border-2 border-[#f5a623] rounded-xl px-4 py-2 shadow-gold flex items-center gap-2">
@@ -123,11 +137,12 @@ export default function CourseCard({ course, index }: CourseCardProps) {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 relative z-20">
           <button
+            type="button"
             onClick={handleAdd}
             disabled={inCart}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all cursor-pointer ${
               inCart
                 ? "bg-green-500 text-white cursor-default"
                 : added
@@ -152,13 +167,22 @@ export default function CourseCard({ course, index }: CourseCardProps) {
               </>
             )}
           </button>
-          <Link
-            to={`/course/${course.id}`}
-            className="flex items-center justify-center px-4 py-3 rounded-xl border-2 border-[#1a2a4a] text-[#1a2a4a] font-bold text-sm hover:bg-[#1a2a4a] hover:text-white transition-all"
+          <button
+            type="button"
+            onClick={handleViewDetails}
+            className="flex items-center justify-center px-4 py-3 rounded-xl border-2 border-[#1a2a4a] text-[#1a2a4a] font-bold text-sm hover:bg-[#1a2a4a] hover:text-white transition-all cursor-pointer"
           >
             <Eye className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
+
+        {/* View Details Link (also as text for clarity) */}
+        <Link
+          to={`/course/${course.id}`}
+          className="block text-center text-xs text-[#6b7280] hover:text-[#f5a623] transition-colors mt-3"
+        >
+          عرض تفاصيل الدورة ←
+        </Link>
       </div>
     </div>
   );
