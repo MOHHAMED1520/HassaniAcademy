@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useCart } from "@/context/CartContext";
 import type { Course } from "@/data/courses";
 import { Crown, Zap, BookOpen, Check, ShoppingCart, Eye, Star, Clock, Target } from "lucide-react";
@@ -21,7 +21,7 @@ export default function CourseCard({ course, index }: CourseCardProps) {
   const [added, setAdded] = useState(false);
   const inCart = isInCart(course.id);
 
-  const handleAdd = (e: React.MouseEvent) => {
+  function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
     if (!inCart) {
@@ -29,44 +29,51 @@ export default function CourseCard({ course, index }: CourseCardProps) {
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     }
-  };
+  }
 
-  const handleViewDetails = (e: React.MouseEvent) => {
+  function handleView(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/course/${course.id}`);
-  };
+    navigate("/course/" + course.id);
+  }
 
   const discount = Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100);
 
   return (
     <div
-      className="group relative bg-white rounded-2xl border border-[#e5e7eb] hover-lift shadow-lg animate-slide-up"
-      style={{ animationDelay: `${index * 150}ms` }}
+      className="group relative bg-white rounded-2xl border border-[#e5e7eb] shadow-lg"
+      style={{ animationDelay: `${index * 150}ms`, position: "relative" }}
     >
-      {/* Shine effect - pointer-events disabled so it never blocks clicks */}
-      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
-        <div className="card-shine-inner" />
-      </div>
+      {/* Decorative overlays — pointer-events disabled so they never block clicks */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius: "1rem",
+          overflow: "hidden",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
 
-      {/* Badge */}
-      <div className="absolute top-4 right-4 z-20 pointer-events-none">
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#f5a623] text-[#1a2a4a] shadow-gold">
+      {/* Badge top-right */}
+      <div style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 30, pointerEvents: "none" }}>
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#f5a623] text-[#1a2a4a]">
           <Star className="w-3 h-3 ml-1 fill-current" />
           {course.badge}
         </span>
       </div>
 
-      {/* Discount Badge */}
-      <div className="absolute top-4 left-4 z-20 pointer-events-none">
+      {/* Discount badge top-left */}
+      <div style={{ position: "absolute", top: "1rem", left: "1rem", zIndex: 30, pointerEvents: "none" }}>
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white">
           وفر {discount}%
         </span>
       </div>
 
-      {/* Header Gradient */}
-      <div className={`bg-gradient-to-br ${course.gradient} p-6 pb-8 relative rounded-t-2xl overflow-hidden`}>
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
+      {/* Header */}
+      <div className={`bg-gradient-to-br ${course.gradient} p-6 pb-8 rounded-t-2xl overflow-hidden`} style={{ position: "relative" }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.1, pointerEvents: "none" }}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
         </div>
@@ -80,10 +87,10 @@ export default function CourseCard({ course, index }: CourseCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-6 relative z-10">
+      <div className="p-6" style={{ position: "relative", zIndex: 10 }}>
         {/* Target Score */}
         <div className="flex items-center justify-center gap-2 mb-4 -mt-10">
-          <div className="bg-white border-2 border-[#f5a623] rounded-xl px-4 py-2 shadow-gold flex items-center gap-2">
+          <div className="bg-white border-2 border-[#f5a623] rounded-xl px-4 py-2 shadow-md flex items-center gap-2">
             <Target className="w-4 h-4 text-[#f5a623]" />
             <span className="text-sm font-bold text-[#1a2a4a]">الهدف: {course.targetScore}</span>
           </div>
@@ -133,22 +140,34 @@ export default function CourseCard({ course, index }: CourseCardProps) {
         {/* Price */}
         <div className="flex items-center justify-center gap-3 mb-4">
           <span className="text-3xl font-black text-[#1a2a4a]">{course.price} ر.س</span>
-          <span className="text-lg text-[#9ca3af] strikethrough font-medium">{course.originalPrice} ر.س</span>
+          <span className="text-lg text-[#9ca3af] line-through font-medium">{course.originalPrice} ر.س</span>
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2 relative z-20">
+        {/* Action Buttons — inline styles to guarantee z-index and pointer-events */}
+        <div style={{ display: "flex", gap: "0.5rem", position: "relative", zIndex: 50 }}>
+          {/* Add to Cart */}
           <button
             type="button"
-            onClick={handleAdd}
+            onClick={handleAddToCart}
             disabled={inCart}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all cursor-pointer ${
-              inCart
-                ? "bg-green-500 text-white cursor-default"
-                : added
-                ? "bg-green-500 text-white"
-                : "bg-gradient-to-r from-[#f5a623] to-[#f7b84e] text-[#1a2a4a] hover:shadow-gold hover:scale-[1.02] active:scale-[0.98]"
-            }`}
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              padding: "0.75rem 1rem",
+              borderRadius: "0.75rem",
+              fontWeight: "700",
+              fontSize: "0.875rem",
+              cursor: inCart ? "default" : "pointer",
+              border: "none",
+              background: inCart || added ? "#22c55e" : "linear-gradient(to right, #f5a623, #f7b84e)",
+              color: inCart || added ? "#fff" : "#1a2a4a",
+              transition: "all 0.2s",
+              position: "relative",
+              zIndex: 50,
+            }}
           >
             {inCart ? (
               <>
@@ -167,22 +186,57 @@ export default function CourseCard({ course, index }: CourseCardProps) {
               </>
             )}
           </button>
+
+          {/* View Details */}
           <button
             type="button"
-            onClick={handleViewDetails}
-            className="flex items-center justify-center px-4 py-3 rounded-xl border-2 border-[#1a2a4a] text-[#1a2a4a] font-bold text-sm hover:bg-[#1a2a4a] hover:text-white transition-all cursor-pointer"
+            onClick={handleView}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0.75rem 1rem",
+              borderRadius: "0.75rem",
+              border: "2px solid #1a2a4a",
+              background: "transparent",
+              color: "#1a2a4a",
+              fontWeight: "700",
+              fontSize: "0.875rem",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              position: "relative",
+              zIndex: 50,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#1a2a4a";
+              e.currentTarget.style.color = "#fff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "#1a2a4a";
+            }}
           >
             <Eye className="w-4 h-4" />
           </button>
         </div>
 
-        {/* View Details Link (also as text for clarity) */}
-        <Link
-          to={`/course/${course.id}`}
-          className="block text-center text-xs text-[#6b7280] hover:text-[#f5a623] transition-colors mt-3"
-        >
-          عرض تفاصيل الدورة ←
-        </Link>
+        {/* Text link fallback */}
+        <div style={{ textAlign: "center", marginTop: "0.75rem", position: "relative", zIndex: 50 }}>
+          <button
+            type="button"
+            onClick={handleView}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "0.75rem",
+              color: "#6b7280",
+              textDecoration: "underline",
+            }}
+          >
+            عرض تفاصيل الدورة ←
+          </button>
+        </div>
       </div>
     </div>
   );
